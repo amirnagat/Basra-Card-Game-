@@ -708,8 +708,18 @@ function StreakMeter({ streak, small }) {
 }
 
 const redSuits = new Set(["♥", "♦"]);
+
+// Face card center illustrations
+const FACE_ART = {
+  K: { "♠": "♚", "♥": "♛", "♦": "♛", "♣": "♚" },
+  Q: { "♠": "♛", "♥": "♛", "♦": "♛", "♣": "♛" },
+  J: { "♠": "♞", "♥": "♟", "♦": "♟", "♣": "♞" },
+};
+
 function CardFace({ card, small, selected, onClick, highlight }) {
   const isRed = redSuits.has(card.suit);
+  const faceArt = FACE_ART[card.rank]?.[card.suit];
+
   return (
     <div onClick={onClick}
       className={`relative rounded-lg select-none flex flex-col justify-between shadow-lg border-2 transition-all duration-150 overflow-hidden
@@ -723,20 +733,32 @@ function CardFace({ card, small, selected, onClick, highlight }) {
       }}>
       {/* Top-left rank + suit */}
       <div className={`font-bold leading-none ${isRed ? "text-red-600" : "text-slate-900"}`}
-        style={{ fontSize: "clamp(8px, 2vw, 13px)" }}>
+        style={{ fontSize: "clamp(10px, 2.8vw, 13px)" }}>
         <div style={{ lineHeight: 1 }}>{card.rank}</div>
-        <div style={{ lineHeight: 1, fontSize: "clamp(7px, 1.8vw, 11px)" }}>{card.suit}</div>
+        <div style={{ lineHeight: 1, fontSize: "clamp(9px, 2.2vw, 11px)" }}>{card.suit}</div>
       </div>
-      {/* Center suit */}
-      <div className={`text-center font-bold ${isRed ? "text-red-500" : "text-slate-800"}`}
-        style={{ fontSize: small ? "clamp(10px, 2.5vw, 18px)" : "clamp(14px, 3.5vw, 24px)" }}>
-        {card.suit}
-      </div>
+      {/* Center — face card art or suit symbol */}
+      {faceArt ? (
+        <div className="flex items-center justify-center"
+          style={{
+            fontSize: small ? "clamp(12px, 3vw, 20px)" : "clamp(18px, 4.5vw, 30px)",
+            color: isRed ? "#b91c1c" : "#1e1b4b",
+            lineHeight: 1,
+            filter: isRed ? "drop-shadow(0 1px 1px rgba(185,28,28,0.3))" : "drop-shadow(0 1px 1px rgba(30,27,75,0.3))",
+          }}>
+          {faceArt}
+        </div>
+      ) : (
+        <div className={`text-center font-bold ${isRed ? "text-red-500" : "text-slate-800"}`}
+          style={{ fontSize: small ? "clamp(10px, 2.5vw, 18px)" : "clamp(14px, 3.5vw, 24px)" }}>
+          {card.suit}
+        </div>
+      )}
       {/* Bottom rank + suit (rotated) */}
       <div className={`font-bold leading-none rotate-180 self-end ${isRed ? "text-red-600" : "text-slate-900"}`}
-        style={{ fontSize: "clamp(8px, 2vw, 13px)" }}>
+        style={{ fontSize: "clamp(10px, 2.8vw, 13px)" }}>
         <div style={{ lineHeight: 1 }}>{card.rank}</div>
-        <div style={{ lineHeight: 1, fontSize: "clamp(7px, 1.8vw, 11px)" }}>{card.suit}</div>
+        <div style={{ lineHeight: 1, fontSize: "clamp(9px, 2.2vw, 11px)" }}>{card.suit}</div>
       </div>
       {(is2Spades(card) || is10Diamonds(card) || is7Diamonds(card) || isAce(card) || isJack(card)) && (
         <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-yellow-400 border border-yellow-600" />
@@ -1848,7 +1870,7 @@ export default function BasraGame() {
 
           {game.tableCards.length === 0 && <div className="text-white/15 text-sm italic">שולחן ריק</div>}
 
-          <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center items-center">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center items-center" style={{ paddingLeft: "clamp(44px, 12vw, 56px)" }}>
             <AnimatePresence>
               {game.tableCards.map((card, i) => (
                 <motion.div key={card.id}
@@ -1862,8 +1884,9 @@ export default function BasraGame() {
           </div>
 
           {game.deck.length > 0 && (
-            <div className="absolute left-2 bottom-2 text-white/25 text-xs flex flex-col items-center gap-0.5">
-              <CardBack small /><span>×{game.deck.length}</span>
+            <div className="absolute left-1 bottom-1 text-white/20 text-xs flex flex-col items-center gap-0.5 pointer-events-none"
+              style={{ zIndex: 0 }}>
+              <CardBack small /><span style={{ fontSize: "10px" }}>×{game.deck.length}</span>
             </div>
           )}
         </motion.div>
@@ -1894,7 +1917,7 @@ export default function BasraGame() {
       {/* ── Bottom Hand (active player) ── */}
       <div className="px-3 pt-1 pb-3">
         <div className="flex items-center justify-center gap-2 mb-1.5">
-          <div className="text-xs text-white/40">הקלפים של {bottomLabel}</div>
+          <div className="text-xs text-white/40">הקלפים שלך</div>
           {isMP && cardsRevealed && (
             <div className="flex items-center gap-1 text-xs text-green-400/60">
               <Eye size={10} /><span>גלוי</span>
