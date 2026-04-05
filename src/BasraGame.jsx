@@ -710,30 +710,36 @@ function StreakMeter({ streak, small }) {
 const redSuits = new Set(["♥", "♦"]);
 function CardFace({ card, small, selected, onClick, highlight }) {
   const isRed = redSuits.has(card.suit);
-  // small = opponent hand; normal = player hand
-  // On mobile we shrink the "normal" size too via w/h classes
   return (
     <div onClick={onClick}
-      className={`relative rounded-lg select-none flex flex-col justify-between shadow-lg border-2 transition-all duration-150
-        ${small
-          ? "w-10 h-14 sm:w-12 sm:h-16 p-0.5 text-xs"
-          : "w-13 h-18 sm:w-16 sm:h-24 p-1 text-xs sm:text-sm"}
+      className={`relative rounded-lg select-none flex flex-col justify-between shadow-lg border-2 transition-all duration-150 overflow-hidden
         ${selected ? "border-yellow-400 scale-110 shadow-yellow-400/60 shadow-xl" : highlight ? "border-yellow-400/50" : "border-white/20"}
         ${onClick ? "cursor-pointer" : "cursor-default"}`}
       style={{
         background: "linear-gradient(135deg, #fff 0%, #f0f0f0 100%)",
-        width: small ? undefined : "clamp(52px, 13vw, 64px)",
-        height: small ? undefined : "clamp(72px, 18vw, 96px)",
+        width: small ? "clamp(36px, 9vw, 48px)" : "clamp(44px, 11vw, 60px)",
+        height: small ? "clamp(50px, 12vw, 64px)" : "clamp(62px, 15vw, 88px)",
+        padding: "clamp(2px, 0.5vw, 4px)",
       }}>
-      <div className={`font-bold leading-none ${isRed ? "text-red-600" : "text-slate-900"}`}>
-        <div>{card.rank}</div><div className="leading-none" style={{ fontSize: "0.6rem" }}>{card.suit}</div>
+      {/* Top-left rank + suit */}
+      <div className={`font-bold leading-none ${isRed ? "text-red-600" : "text-slate-900"}`}
+        style={{ fontSize: "clamp(8px, 2vw, 13px)" }}>
+        <div style={{ lineHeight: 1 }}>{card.rank}</div>
+        <div style={{ lineHeight: 1, fontSize: "clamp(7px, 1.8vw, 11px)" }}>{card.suit}</div>
       </div>
-      <div className={`text-center font-bold ${small ? "text-base" : "text-xl sm:text-2xl"} ${isRed ? "text-red-500" : "text-slate-800"}`}>{card.suit}</div>
-      <div className={`font-bold leading-none rotate-180 self-end ${isRed ? "text-red-600" : "text-slate-900"}`}>
-        <div>{card.rank}</div><div className="leading-none" style={{ fontSize: "0.6rem" }}>{card.suit}</div>
+      {/* Center suit */}
+      <div className={`text-center font-bold ${isRed ? "text-red-500" : "text-slate-800"}`}
+        style={{ fontSize: small ? "clamp(10px, 2.5vw, 18px)" : "clamp(14px, 3.5vw, 24px)" }}>
+        {card.suit}
+      </div>
+      {/* Bottom rank + suit (rotated) */}
+      <div className={`font-bold leading-none rotate-180 self-end ${isRed ? "text-red-600" : "text-slate-900"}`}
+        style={{ fontSize: "clamp(8px, 2vw, 13px)" }}>
+        <div style={{ lineHeight: 1 }}>{card.rank}</div>
+        <div style={{ lineHeight: 1, fontSize: "clamp(7px, 1.8vw, 11px)" }}>{card.suit}</div>
       </div>
       {(is2Spades(card) || is10Diamonds(card) || is7Diamonds(card) || isAce(card) || isJack(card)) && (
-        <div className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-yellow-400 border border-yellow-600" />
+        <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-yellow-400 border border-yellow-600" />
       )}
     </div>
   );
@@ -743,8 +749,8 @@ function CardBack({ small }) {
     <div
       className="rounded-lg border-2 border-white/20 shadow-lg"
       style={{
-        width: small ? "clamp(40px, 10vw, 48px)" : "clamp(52px, 13vw, 64px)",
-        height: small ? "clamp(56px, 14vw, 64px)" : "clamp(72px, 18vw, 96px)",
+        width: small ? "clamp(36px, 9vw, 48px)" : "clamp(44px, 11vw, 60px)",
+        height: small ? "clamp(50px, 12vw, 64px)" : "clamp(62px, 15vw, 88px)",
         background: "linear-gradient(135deg, #1a237e 0%, #283593 50%, #1a237e 100%)",
       }}>
       <div className="w-full h-full rounded-md m-0.5 border border-blue-300/30"
