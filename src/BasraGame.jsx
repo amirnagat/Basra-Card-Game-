@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { RefreshCw, Info, X, Flame, Eye, EyeOff, Users, Monitor, ChevronLeft } from "lucide-react";
+import { RefreshCw, Info, X, Flame, Eye, EyeOff, Users, Monitor, ChevronLeft, Menu } from "lucide-react";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // AUDIO ENGINE
@@ -1350,6 +1350,7 @@ export default function BasraGame() {
   const [showInfo, setShowInfo] = useState(false);
   const [confirmQuit, setConfirmQuit] = useState(false);
   const [confirmRestart, setConfirmRestart] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [toasts, setToasts] = useState([]);
   const [goldFlash, setGoldFlash] = useState(false);
   const [fireActive, setFireActive] = useState(false);
@@ -1766,18 +1767,57 @@ export default function BasraGame() {
       </AnimatePresence>
 
       <ScreenShake shake={screenShake}>
+      {/* Menu backdrop */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40"
+            onClick={() => setMenuOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
       {/* ── Header ── */}
       <div className="flex items-center justify-between px-3 pt-3 pb-1.5">
-        <div className="flex gap-1.5">
-          <button onClick={goMenu} className="p-1.5 sm:p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white/60 hover:text-white transition-all">
-            <ChevronLeft size={16} />
+        {/* Hamburger menu */}
+        <div className="relative">
+          <button
+            onClick={() => setMenuOpen(o => !o)}
+            className="p-1.5 sm:p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white/60 hover:text-white transition-all">
+            {menuOpen ? <X size={16} /> : <Menu size={16} />}
           </button>
-          <button onClick={() => setConfirmRestart(true)} className="p-1.5 sm:p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white/60 hover:text-white transition-all">
-            <RefreshCw size={16} />
-          </button>
-          <button onClick={() => setShowInfo(true)} className="p-1.5 sm:p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white/60 hover:text-white transition-all">
-            <Info size={16} />
-          </button>
+
+          {/* Dropdown */}
+          <AnimatePresence>
+            {menuOpen && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: -8 }}
+                animate={{ opacity: 1, scale: 1, y: 0, transition: { type: "spring", stiffness: 320, damping: 22 } }}
+                exit={{ opacity: 0, scale: 0.9, y: -8, transition: { duration: 0.15 } }}
+                className="absolute top-full mt-2 right-0 z-50 flex flex-col overflow-hidden rounded-2xl border border-white/10 shadow-2xl"
+                style={{ background: "#0f1f12", minWidth: 160 }}
+                onClick={() => setMenuOpen(false)}>
+                <button onClick={goMenu}
+                  className="flex items-center gap-3 px-4 py-3 text-sm text-white/70 hover:bg-white/8 hover:text-white transition-all text-right">
+                  <ChevronLeft size={15} className="text-white/40" />
+                  חזרה לתפריט
+                </button>
+                <div className="h-px mx-3" style={{ background: "rgba(255,255,255,0.06)" }} />
+                <button onClick={() => setConfirmRestart(true)}
+                  className="flex items-center gap-3 px-4 py-3 text-sm text-white/70 hover:bg-white/8 hover:text-white transition-all text-right">
+                  <RefreshCw size={15} className="text-white/40" />
+                  משחק חדש
+                </button>
+                <div className="h-px mx-3" style={{ background: "rgba(255,255,255,0.06)" }} />
+                <button onClick={() => setShowInfo(true)}
+                  className="flex items-center gap-3 px-4 py-3 text-sm text-white/70 hover:bg-white/8 hover:text-white transition-all text-right">
+                  <Info size={15} className="text-white/40" />
+                  חוקי המשחק
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
         <div className="text-center">
           <h1 className="text-lg sm:text-xl font-bold tracking-widest" style={{ color: "#d4af37", textShadow: "0 0 20px rgba(212,175,55,0.45)" }}>בסרה</h1>
