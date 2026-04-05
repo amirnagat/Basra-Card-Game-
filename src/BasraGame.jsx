@@ -1781,7 +1781,7 @@ export default function BasraGame() {
       {/* ── Header ── */}
       <div className="relative flex items-center justify-between px-3 pt-3 pb-1.5">
         {/* Hamburger menu */}
-        <div className="relative z-10">
+        <div className="relative z-50">
           <button
             onClick={() => setMenuOpen(o => !o)}
             className="p-1.5 sm:p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white/60 hover:text-white transition-all">
@@ -1795,23 +1795,22 @@ export default function BasraGame() {
                 initial={{ opacity: 0, scale: 0.9, y: -8 }}
                 animate={{ opacity: 1, scale: 1, y: 0, transition: { type: "spring", stiffness: 320, damping: 22 } }}
                 exit={{ opacity: 0, scale: 0.9, y: -8, transition: { duration: 0.15 } }}
-                className="absolute top-full mt-2 right-0 z-50 flex flex-col overflow-hidden rounded-2xl border border-white/10 shadow-2xl"
-                style={{ background: "#0f1f12", minWidth: 160 }}
-                onClick={() => setMenuOpen(false)}>
-                <button onClick={goMenu}
-                  className="flex items-center gap-3 px-4 py-3 text-sm text-white/70 hover:bg-white/8 hover:text-white transition-all text-right">
+                className="absolute top-full mt-2 right-0 flex flex-col overflow-hidden rounded-2xl border border-white/10 shadow-2xl"
+                style={{ background: "#0f1f12", minWidth: 160, zIndex: 9999 }}>
+                <button onClick={() => { setMenuOpen(false); goMenu(); }}
+                  className="flex items-center gap-3 px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-all text-right w-full">
                   <ChevronLeft size={15} className="text-white/40" />
                   חזרה לתפריט
                 </button>
                 <div className="h-px mx-3" style={{ background: "rgba(255,255,255,0.06)" }} />
-                <button onClick={() => setConfirmRestart(true)}
-                  className="flex items-center gap-3 px-4 py-3 text-sm text-white/70 hover:bg-white/8 hover:text-white transition-all text-right">
+                <button onClick={() => { setMenuOpen(false); setConfirmRestart(true); }}
+                  className="flex items-center gap-3 px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-all text-right w-full">
                   <RefreshCw size={15} className="text-white/40" />
                   משחק חדש
                 </button>
                 <div className="h-px mx-3" style={{ background: "rgba(255,255,255,0.06)" }} />
-                <button onClick={() => setShowInfo(true)}
-                  className="flex items-center gap-3 px-4 py-3 text-sm text-white/70 hover:bg-white/8 hover:text-white transition-all text-right">
+                <button onClick={() => { setMenuOpen(false); setShowInfo(true); }}
+                  className="flex items-center gap-3 px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-all text-right w-full">
                   <Info size={15} className="text-white/40" />
                   חוקי המשחק
                 </button>
