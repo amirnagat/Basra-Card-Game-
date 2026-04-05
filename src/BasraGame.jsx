@@ -709,16 +709,16 @@ function StreakMeter({ streak, small }) {
 
 const redSuits = new Set(["♥", "♦"]);
 
-// Face card center illustrations
+// Face card center illustrations — same symbol per rank regardless of suit
 const FACE_ART = {
-  K: { "♠": "♚", "♥": "♛", "♦": "♛", "♣": "♚" },
-  Q: { "♠": "♛", "♥": "♛", "♦": "♛", "♣": "♛" },
-  J: { "♠": "♞", "♥": "♟", "♦": "♟", "♣": "♞" },
+  K: "♔",
+  Q: "♕",
+  J: "♘",
 };
 
 function CardFace({ card, small, selected, onClick, highlight }) {
   const isRed = redSuits.has(card.suit);
-  const faceArt = FACE_ART[card.rank]?.[card.suit];
+  const faceArt = FACE_ART[card.rank];
 
   return (
     <div onClick={onClick}
@@ -741,10 +741,9 @@ function CardFace({ card, small, selected, onClick, highlight }) {
       {faceArt ? (
         <div className="flex items-center justify-center"
           style={{
-            fontSize: small ? "clamp(12px, 3vw, 20px)" : "clamp(18px, 4.5vw, 30px)",
+            fontSize: small ? "clamp(10px, 2.5vw, 16px)" : "clamp(14px, 3.5vw, 24px)",
             color: isRed ? "#b91c1c" : "#1e1b4b",
             lineHeight: 1,
-            filter: isRed ? "drop-shadow(0 1px 1px rgba(185,28,28,0.3))" : "drop-shadow(0 1px 1px rgba(30,27,75,0.3))",
           }}>
           {faceArt}
         </div>
