@@ -1779,9 +1779,9 @@ export default function BasraGame() {
       </AnimatePresence>
 
       {/* ── Header ── */}
-      <div className="flex items-center justify-between px-3 pt-3 pb-1.5">
+      <div className="relative flex items-center justify-between px-3 pt-3 pb-1.5">
         {/* Hamburger menu */}
-        <div className="relative">
+        <div className="relative z-10">
           <button
             onClick={() => setMenuOpen(o => !o)}
             className="p-1.5 sm:p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white/60 hover:text-white transition-all">
@@ -1819,14 +1819,12 @@ export default function BasraGame() {
             )}
           </AnimatePresence>
         </div>
-        <div className="text-center">
+        {/* Title — absolutely centered regardless of side elements */}
+        <div className="absolute inset-x-0 flex flex-col items-center pointer-events-none">
           <h1 className="text-lg sm:text-xl font-bold tracking-widest" style={{ color: "#d4af37", textShadow: "0 0 20px rgba(212,175,55,0.45)" }}>בסרה</h1>
-          <div className="flex items-center justify-center gap-1.5">
-            <div className="text-xs text-white/30">{game.deck.length} קלפים</div>
-            {isMP && <span className="text-xs px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400/80 border border-blue-500/20">2P</span>}
-          </div>
+          {isMP && <span className="text-xs px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400/80 border border-blue-500/20">2P</span>}
         </div>
-        <div className="w-16 sm:w-20 flex justify-end">
+        <div className="relative z-10 w-16 sm:w-20 flex justify-end">
           <StreakMeter streak={game.playerStreak} small />
         </div>
       </div>
