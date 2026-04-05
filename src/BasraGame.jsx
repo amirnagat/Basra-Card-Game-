@@ -749,7 +749,7 @@ function CardFace({ card, small, selected, onClick, highlight }) {
         </div>
       ) : (
         <div className={`text-center font-bold ${isRed ? "text-red-500" : "text-slate-800"}`}
-          style={{ fontSize: small ? "clamp(10px, 2.5vw, 18px)" : "clamp(14px, 3.5vw, 24px)" }}>
+          style={{ fontSize: small ? "clamp(8px, 2vw, 14px)" : "clamp(11px, 2.8vw, 18px)" }}>
           {card.suit}
         </div>
       )}
