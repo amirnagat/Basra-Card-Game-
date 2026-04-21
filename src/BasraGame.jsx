@@ -980,7 +980,7 @@ function InfoModal({ onClose }) {
           <section>
             <h3 className="text-yellow-300 font-bold text-sm mb-1.5 flex items-center gap-1.5">🎯 מטרת המשחק</h3>
             <p className="text-white/70 text-xs leading-relaxed">
-              לצבור <span className="text-white font-semibold">יותר נקודות מהיריב</span> עד שנגמרים כל 52 הקלפים בחבילה. אין מספר קבוע לניצחון — מי שגמר עם יותר נקודות, ניצח.
+              להגיע ל-<span className="text-white font-semibold">52 נקודות</span> לפני היריב. המשחק נגמר כשנגמרים כל 52 הקלפים — מי שהגיע ל-52 מנצח, מי שלא — הפסיד.
             </p>
           </section>
 
@@ -1052,7 +1052,7 @@ function InfoModal({ onClose }) {
             <div className="bg-yellow-400/10 border border-yellow-400/25 rounded-xl p-3 text-xs">
               <div className="text-yellow-300 font-bold mb-1">🎖️ איך מנצחים?</div>
               <p className="text-white/70 leading-relaxed">
-                המשחק נגמר כשנגמרים כל 52 הקלפים. <span className="text-white font-semibold">מי שצבר יותר נקודות — מנצח.</span> הניקוד המקסימלי התיאורטי הוא כ-57 נקודות (4 בסרות + כל הקלפים המיוחדים + בונוס קלפים), אבל ברוב המשחקים מנצחים עם <span className="text-white font-semibold">15–35 נקודות</span>. אם יש תיקו — המשחק מסתיים בתיקו.
+                המשחק נגמר כשנגמרים כל 52 הקלפים. <span className="text-white font-semibold">צריך להגיע ל-52 נקודות כדי לנצח.</span> אם אף אחד לא הגיע ל-52 — אף אחד לא מנצח. אם שניהם הגיעו — מי שיש לו יותר מנצח.
               </p>
             </div>
           </section>
@@ -1075,7 +1075,19 @@ function EndScreen({ result, playerScore, cpuScore, playerBasras, cpuBasras, mod
   const isMP = mode === MODE.LOCAL_MP;
   const p1Label = isMP ? "שחקן 1" : "אתה";
   const p2Label = isMP ? "שחקן 2" : "מחשב";
-  const won = result === "player", tied = result === "tie";
+  const WIN_SCORE = 52;
+  const won = result === "player";
+  const lost = result === "cpu";
+  const none = result === "none"; // אף אחד לא הגיע ל-52
+
+  const emoji = won ? "🏆" : none ? "😐" : "😔";
+  const titleColor = won ? "#d4af37" : none ? "#94a3b8" : "#ef4444";
+  const borderColor = won ? "#d4af37" : none ? "#64748b" : "#ef4444";
+  const titleText = won
+    ? (isMP ? "שחקן 1 ניצח!" : "ניצחת!")
+    : none
+    ? "אף אחד לא הגיע ל-52"
+    : (isMP ? "שחקן 2 ניצח!" : "המחשב ניצח!");
 
   // Build score breakdown for each player
   const breakdown = (captured, basras) => {
@@ -1103,14 +1115,15 @@ function EndScreen({ result, playerScore, cpuScore, playerBasras, cpuBasras, mod
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
       <motion.div initial={{ scale: 0.6, y: 60 }} animate={{ scale: 1, y: 0, transition: { type: "spring", stiffness: 200, damping: 18 } }}
         className="text-center rounded-3xl border shadow-2xl w-full mx-auto overflow-hidden"
-        style={{ maxWidth: 340, background: "linear-gradient(135deg,#0f172a,#1e293b)", borderColor: won ? "#d4af37" : tied ? "#64748b" : "#ef4444" }}>
+        style={{ maxWidth: 340, background: "linear-gradient(135deg,#0f172a,#1e293b)", borderColor }}>
 
         {/* Result header */}
         <div className="px-6 pt-6 pb-4">
-          <div className="text-5xl mb-3">{won ? "🏆" : tied ? "🤝" : "😔"}</div>
-          <h2 className="text-xl font-bold" style={{ color: won ? "#d4af37" : tied ? "#94a3b8" : "#ef4444" }}>
-            {won ? (isMP ? "שחקן 1 ניצח!" : "ניצחת!") : tied ? "תיקו!" : (isMP ? "שחקן 2 ניצח!" : "המחשב ניצח!")}
-          </h2>
+          <div className="text-5xl mb-3">{emoji}</div>
+          <h2 className="text-xl font-bold" style={{ color: titleColor }}>{titleText}</h2>
+          {none && (
+            <p className="text-xs text-white/40 mt-1">צריך להגיע ל-{WIN_SCORE} נקודות כדי לנצח</p>
+          )}
         </div>
 
         {/* Score columns */}
@@ -1135,7 +1148,7 @@ function EndScreen({ result, playerScore, cpuScore, playerBasras, cpuBasras, mod
           </div>
 
           {/* Player 2 / CPU */}
-          <div className="flex-1 rounded-2xl p-3" style={{ background: "rgba(255,255,255,0.05)", border: !won && !tied ? "1px solid rgba(239,68,68,0.3)" : "1px solid rgba(255,255,255,0.06)" }}>
+          <div className="flex-1 rounded-2xl p-3" style={{ background: "rgba(255,255,255,0.05)", border: lost ? "1px solid rgba(239,68,68,0.3)" : "1px solid rgba(255,255,255,0.06)" }}>
             <div className="text-xs text-white/50 mb-1">{p2Label}</div>
             <div className="text-2xl font-bold text-white mb-2">{cpuScore}</div>
             {cBreak.length > 0 ? (
@@ -1531,7 +1544,41 @@ export default function BasraGame() {
           g.tableCards = [];
           const final = computeFinalScore(g);
           g.playerScore = final.playerScore; g.cpuScore = final.cpuScore;
-          g.phase = PHASE.GAME_END;
+
+          const WIN_SCORE = 52;
+          const pWon = g.playerScore >= WIN_SCORE;
+          const cWon = g.cpuScore >= WIN_SCORE;
+
+          if (pWon || cWon) {
+            // At least one reached 52 — end game
+            g.phase = PHASE.GAME_END;
+          } else {
+            // Nobody reached 52 — shuffle new deck, keep scores, continue
+            let newDeck = shuffle(buildDeck());
+            let newTable = [];
+            let attempts = 0;
+            while (newTable.length < 4 && attempts < 100) {
+              attempts++;
+              const card = newDeck.shift();
+              if (isSpecialClear(card)) { newDeck.push(card); newDeck = shuffle(newDeck); }
+              else newTable.push(card);
+            }
+            g.deck = newDeck;
+            g.tableCards = newTable;
+            g.playerHand = newDeck.splice(0, 4);
+            g.cpuHand = newDeck.splice(0, 4);
+            g.playerCaptured = [];
+            g.cpuCaptured = [];
+            g.lastCaptor = null;
+            g.playerStreak = 0; g.cpuStreak = 0;
+            g._pendingFX = { ...(g._pendingFX ?? {}), dealNew: true, newDeck: true, _id: (g._pendingFX?._id ?? 0) + 1 };
+            if (g.mode === MODE.LOCAL_MP) {
+              g._nextPhaseAfterPass = PHASE.PLAYER_TURN;
+              g.phase = PHASE.PASS_SCREEN;
+            } else {
+              g.phase = PHASE.PLAYER_TURN;
+            }
+          }
         }
       } else {
         if (g.mode === MODE.LOCAL_MP) {
@@ -1585,6 +1632,10 @@ export default function BasraGame() {
 
     if (dealNew) {
       setTimeout(() => { playCardRustle(audio()); setDealKey(k => k + 1); }, 300);
+      // If no one reached 52, show a toast that a new deck started
+      if (fx.newDeck) {
+        setTimeout(() => addToast("אף אחד לא הגיע ל-52 — חפיסה חדשה! 🃏", "🔄", true), 500);
+      }
     }
   }, [game?._pendingFX, triggerBasraFX, addToast]);
 
@@ -1698,8 +1749,13 @@ export default function BasraGame() {
   const topLabel = isMP ? (isP2Turn ? p1Label : p2Label) : p2Label;
   const bottomIsP1 = !isMP || !isP2Turn; // is the bottom hand P1's hand?
 
+  const WIN_SCORE = 52;
   const result = game.phase === PHASE.GAME_END
-    ? game.playerScore > game.cpuScore ? "player" : game.cpuScore > game.playerScore ? "cpu" : "tie"
+    ? (game.playerScore >= WIN_SCORE && game.cpuScore >= WIN_SCORE)
+      ? game.playerScore > game.cpuScore ? "player" : "cpu"
+      : game.playerScore >= WIN_SCORE ? "player"
+      : game.cpuScore >= WIN_SCORE ? "cpu"
+      : "none"
     : null;
 
   const timeCritical = timeLeft <= 5, timeUrgent = timeLeft <= 10;
@@ -1941,7 +1997,7 @@ export default function BasraGame() {
                 : "#93c5fd",
             }}>
             {isP1Turn
-              ? (timeCritical && showCountdown ? "⚠️ שחק עכשיו!" : timeUrgent && showCountdown ? "מהר!" : `תור ${p1Label}`)
+              ? (timeCritical && showCountdown ? "⚠️ שחק עכשיו!" : timeUrgent && showCountdown ? "מהר!" : isMP ? `תור ${p1Label}` : "תורך!")
               : isP2Turn
               ? (timeCritical && showCountdown ? "⚠️ שחק עכשיו!" : timeUrgent && showCountdown ? "מהר!" : `תור ${p2Label}`)
               : `${p2Label} חושב...`}
